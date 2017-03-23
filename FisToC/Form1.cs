@@ -153,6 +153,22 @@ namespace FisToC
                 textBox2.Text += s +" ";
             }*/
 
+            int[,] arreglas = Reglas.ruleArray(NumRules, InputNumber, Outputnumber);
+            int filas = arreglas.GetLength(0);
+            int columnas = arreglas.GetLength(1);
+
+            for (int i = 0; i < filas; i++)
+            {
+                for (int j = 0; j < columnas; j++)
+                {
+                    Console.Write(string.Format("{0} ", arreglas[i, j]));
+                }
+                Console.Write(Environment.NewLine + Environment.NewLine);
+            }
+
+
+
+
             textBox2.Text = "#include <stdio.h>" + '\n';
             textBox2.Text += "#include \"funcionesFizz.h\"" + '\n';
             textBox2.Text += "int main(){" + '\n';
