@@ -12,12 +12,20 @@ using System.Windows.Forms;
 namespace FisToC
 {
 
-    
-   
+
+    public class memfunction
+    {
+        public int[] range;
+    }
 
     public class Input
         {
-
+        public Input()
+        {
+            mfs = new List<memfunction>();
+        }
+        public int Nmf;
+        public List<memfunction> mfs;
         }
 
     public class Output
@@ -84,6 +92,25 @@ namespace FisToC
                 if(s.Contains("Input"+(InputNumber+1).ToString()))
                 {
                     Input inp = new Input();
+                    string[] nmf = lineas[index + 3].Replace('=', ' ').Split(' '); //obtener el numero de funciones de membresia
+                    inp.Nmf = Int32.Parse(nmf[1]);
+                    int y = index+4;
+                    for (int x = 0; x < inp.Nmf; x++)
+                    {
+                        string[] mfvalues = lineas[y].Replace('[', ' ').Replace(']', ' ').Split(' ');
+                        int[] v = new int [4];
+                         v[0] = Int32.Parse(mfvalues[1]);
+                         v[1] = Int32.Parse(mfvalues[2]);
+                         v[2] = Int32.Parse(mfvalues[3]);
+                         v[3] = Int32.Parse(mfvalues[4]);
+
+                        var mf = new memfunction();
+                        mf.range = v;
+                        inp.mfs.Add(mf);
+                        
+
+                    }   //añadir funciones de mebresia
+
                     inputs.Add(inp);
                     InputNumber++;
                 }
