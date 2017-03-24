@@ -30,7 +30,12 @@ namespace FisToC
 
     public class Output
     {
+        public Output()
+        {
+            outval = new List<double>();
+        }
 
+       public List<double> outval;
     }
 
     public class Rules
@@ -114,10 +119,19 @@ namespace FisToC
                     inputs.Add(inp);
                     InputNumber++;
                 }
-                if(s.Contains("Output"+(Outputnumber+1).ToString()))
+                if (s.Contains("Output" + (Outputnumber + 1).ToString()))
                 {
                     Output ou = new Output();
-                    outputs.Add(ou);
+
+                    string[] nmf = lineas[index + 3].Replace('=', ' ').Split(' '); //obtener el numero de funciones de membresia
+                    int onmf = int.Parse(nmf[1]);
+
+                    for (int x = 0; x < onmf; x++)
+                    {
+                        ou.outval.Add(0);
+                    }
+
+                        outputs.Add(ou);
                     Outputnumber++;
                 }
                 if (s.Contains("NumRules"))
@@ -153,30 +167,70 @@ namespace FisToC
                 textBox2.Text += s +" ";
             }*/
 
-            int[,] arreglas = Reglas.ruleArray(NumRules, InputNumber, Outputnumber);
-            int filas = arreglas.GetLength(0);
-            int columnas = arreglas.GetLength(1);
-
-            for (int i = 0; i < filas; i++)
-            {
-                for (int j = 0; j < columnas; j++)
-                {
-                    Console.Write(string.Format("{0} ", arreglas[i, j]));
-                }
-                Console.Write(Environment.NewLine + Environment.NewLine);
-            }
-
-
-
-
+          
             textBox2.Text = "#include <stdio.h>" + '\n';
             textBox2.Text += "#include \"funcionesFizz.h\"" + '\n';
             textBox2.Text += "int main(){" + '\n';
             for(int x=0;x<InputNumber;x++)
             {
                 textBox2.Text += "double input" + x.ToString() + ";"+ '\n'; 
-                textBox2.Text += "scanf(\"% lf\",&input" + x.ToString() + ");" + '\n';
+                textBox2.Text += "scanf(\"%lf\",&input" + x.ToString() + ");" + '\n';
             }
+
+            int[,] arreglas = Reglas.ruleArray(NumRules, InputNumber, Outputnumber);
+            int filas = arreglas.GetLength(0);
+            int columnas = arreglas.GetLength(1);
+
+
+
+            for (int i = 0; i < filas; i++)
+            {
+                string sgetval = "double v" + i.ToString() + "[] = {";
+
+                for (int j = 0; j < columnas - 1; j++)
+                {
+                    if (arreglas[i, j] != 0)
+                    {
+                        textBox2.Text += "\n double a" + i.ToString() + j.ToString() + "[4] = {";
+                        // textBox2.Text += "\n double r" + i.ToString() + "v" + j.ToString() + " = trapmf({";
+
+                        int[] param1 = inputs[j].mfs[arreglas[i, j] - 1].range;
+                        for (int x = 0; x < param1.GetLength(0) - 1; x++)
+                        {
+                            textBox2.Text += param1[x].ToString() + ",";
+                        }
+                        textBox2.Text += param1[param1.GetLength(0) - 1].ToString();
+                    }
+                    if (arreglas[i, j] != 0)
+                    {
+                        textBox2.Text += "};";
+                        textBox2.Text += "\n double r" + i.ToString() + "v" + j.ToString() + " = trapmf(a" + i.ToString() + j.ToString() + ",1);";
+                        sgetval += "r" + i.ToString() + "v" + j.ToString();
+                        sgetval += ",";
+
+
+
+                    }//Console.Write(string.Format("{0} ", arreglas[i, j]));
+                }
+                sgetval = sgetval.Remove(sgetval.Length - 1);
+                sgetval += "};";
+                textBox2.Text += "\n"+sgetval+"\n";
+                textBox2.Text += "double res" +i.ToString() + " = getValue(" + "v" +i.ToString() + ",1);";
+               
+            }
+
+            //filas es tambien el numero de reglas
+
+            textBox2.Text += "\n double ress[] = {";
+            
+            for (int x = 0; x < filas;x++)
+            {
+                textBox2.Text += "res" + x.ToString();
+                if (x != filas - 1) { textBox2.Text += ","; }
+            }
+            textBox2.Text += "};";
+            textBox2.Text += "\n double resultado = takagiInf(ress);";
+            textBox2.Text += "\n printf(el resultado es %lf,resultado);";
 
 
 
