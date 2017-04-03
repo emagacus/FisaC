@@ -34,23 +34,19 @@ namespace FisToC
                 if(s.Contains("Input"+(InputNumber+1).ToString()))
                 {
                     Input inp = new Input();
+                    inp.name = lineas[index + 1].Replace("Name='","").Replace("'",""); 
                     string[] nmf = lineas[index + 3].Replace('=', ' ').Split(' '); //obtener el numero de funciones de membresia
                     inp.Nmf = Int32.Parse(nmf[1]);
                     int y = index+4;
                     for (int x = 0; x < inp.Nmf; x++)
                     {
                         string[] mfvalues = lineas[y].Replace('[', ' ').Replace(']', ' ').Split(' ');
-                        Console.WriteLine(mfvalues);
+                  
                         double[] v = new double [4];
                          v[0] = double.Parse(mfvalues[1]);
                          v[1] = double.Parse(mfvalues[2]);
                          v[2] = double.Parse(mfvalues[3]);
                          v[3] = double.Parse(mfvalues[4]);
-
-                        Console.WriteLine("v[0] " + v[0]);
-                        Console.WriteLine("v[1] " + v[1]);
-                        Console.WriteLine("v[2] " + v[2]);
-                        Console.WriteLine("v[3] " + v[3]);
 
                         var mf = new memfunction();
                         mf.range = v;
@@ -100,7 +96,7 @@ namespace FisToC
                     {
                         lineas[y]=lineas[y].Trim(',');
                         Reglas.rulestring.Add(lineas[y]);
-                        Console.WriteLine(lineas[y]);
+                      
                     }
 
                 }
@@ -126,7 +122,8 @@ namespace FisToC
             textBox2.Text += "int main(){" + '\n';
             for(int x=0;x<InputNumber;x++)
             {
-                textBox2.Text += "double input" + x.ToString() + ";"+ '\n'; 
+                textBox2.Text += "double input" + x.ToString() + ";"+ '\n';
+                textBox2.Text += "printf(\"Ingrese Input para " + inputs[x].name +"\"); \n";
                 textBox2.Text += "scanf(\"%lf\",&input" + x.ToString() + ");" + '\n';
             }
 
@@ -174,14 +171,6 @@ namespace FisToC
                 //getvalue saca el valor de cada regla
             }
 
-
-            foreach(var o in outputs)
-            {
-                foreach(var i in o.outval)
-                {
-                    Console.WriteLine("Valor de output: " + i.ToString());
-                }
-            }
 
             //filas es tambien el numero de reglas
 
@@ -251,6 +240,7 @@ namespace FisToC
             mfs = new List<memfunction>();
         }
         public int Nmf;
+        public string name;
         public List<memfunction> mfs;
     }
 
@@ -289,7 +279,7 @@ namespace FisToC
                 for (int x = 0; x < columns; x++)
                 {
                     array[x] = array[x].Trim(',');
-                    Console.WriteLine(array[x]);
+                    
                     reglas[filecount, x] = int.Parse(array[x]);
 
                 }
@@ -307,7 +297,6 @@ namespace FisToC
                 }
             }
 
-            Console.WriteLine(reglas.ToString());
             return reglas;
         }
 
